@@ -18,18 +18,18 @@ export async function handleNewPair(ctx: EvmLogHandlerContext<Store>) {
     factory = new Factory({
       id: contractAddress,
       pairCount: 0,
-      totalVolumeETH: ZERO_BD.toString(),
-      totalLiquidityETH: ZERO_BD.toString(),
-      totalVolumeUSD: ZERO_BD.toString(),
-      untrackedVolumeUSD: ZERO_BD.toString(),
-      totalLiquidityUSD: ZERO_BD.toString(),
+      totalVolumeETH: ZERO_BD.toFixed(6),
+      totalLiquidityETH: ZERO_BD.toFixed(6),
+      totalVolumeUSD: ZERO_BD.toFixed(6),
+      untrackedVolumeUSD: ZERO_BD.toFixed(6),
+      totalLiquidityUSD: ZERO_BD.toFixed(6),
       txCount: 0,
     })
 
     // create new bundle
     const bundle = new Bundle({
       id: '1',
-      ethPrice: ZERO_BD.toString(),
+      ethPrice: ZERO_BD.toFixed(6),
     })
     await ctx.store.save(bundle)
   }
@@ -48,18 +48,18 @@ export async function handleNewPair(ctx: EvmLogHandlerContext<Store>) {
     createdAtTimestamp: new Date(ctx.block.timestamp),
     createdAtBlockNumber: BigInt(ctx.block.height),
     txCount: 0,
-    reserve0: ZERO_BD.toString(),
-    reserve1: ZERO_BD.toString(),
-    trackedReserveETH: ZERO_BD.toString(),
-    reserveETH: ZERO_BD.toString(),
-    reserveUSD: ZERO_BD.toString(),
-    totalSupply: ZERO_BD.toString(),
-    volumeToken0: ZERO_BD.toString(),
-    volumeToken1: ZERO_BD.toString(),
-    volumeUSD: ZERO_BD.toString(),
-    untrackedVolumeUSD: ZERO_BD.toString(),
-    token0Price: ZERO_BD.toString(),
-    token1Price: ZERO_BD.toString(),
+    reserve0: ZERO_BD.toFixed(6),
+    reserve1: ZERO_BD.toFixed(6),
+    trackedReserveETH: ZERO_BD.toFixed(6),
+    reserveETH: ZERO_BD.toFixed(6),
+    reserveUSD: ZERO_BD.toFixed(6),
+    totalSupply: ZERO_BD.toFixed(6),
+    volumeToken0: ZERO_BD.toFixed(6),
+    volumeToken1: ZERO_BD.toFixed(6),
+    volumeUSD: ZERO_BD.toFixed(6),
+    untrackedVolumeUSD: ZERO_BD.toFixed(6),
+    token0Price: ZERO_BD.toFixed(6),
+    token1Price: ZERO_BD.toFixed(6),
   })
 
   await ctx.store.save(pair)

@@ -2,11 +2,10 @@ import { Big as BigDecimal } from 'big.js'
 
 export const knownContracts: ReadonlyArray<string> = []
 
-export const CHAIN_NODE = 'wss://rpc.astar.network'
+export const CHAIN_NODE = 'wss://wss.api.moonbeam.network'
 
 // need to be lowercase
-export const FACTORY_ADDRESS = '0x7bae21fb8408d534adfefcb46371c3576a1d5717'
-export const FOUR_POOL = '0xb0fa056fffb74c0fb215f86d691c94ed45b686aa'
+export const FACTORY_ADDRESS = '0x079710316b06BBB2c0FF4bEFb7D2DaC206c716A0'.toLowerCase()
 export const ADDRESS_ZERO = '0x0000000000000000000000000000000000000000'
 
 export const ZERO_BI = 0n

@@ -44,8 +44,8 @@ export async function getStableSwapInfo(ctx: CommonHandlerContext<Store>) {
     stbleSwapInfo = new StableSwapInfo({
       id: '1',
       poolCount: 0,
-      totalVolumeUSD: ZERO_BD.toString(),
-      totalTvlUSD: ZERO_BD.toString(),
+      totalVolumeUSD: ZERO_BD.toFixed(6),
+      totalTvlUSD: ZERO_BD.toFixed(6),
       txCount: 0,
       swaps: []
     })
@@ -64,8 +64,8 @@ export async function getZenlinkInfo(ctx: CommonHandlerContext<Store>) {
     zenlinkInfo = new ZenlinkInfo({
       id: '1',
       updatedDate: new Date(ctx.block.timestamp),
-      totalVolumeUSD: ZERO_BD.toString(),
-      totalTvlUSD: ZERO_BD.toString(),
+      totalVolumeUSD: ZERO_BD.toFixed(6),
+      totalTvlUSD: ZERO_BD.toFixed(6),
       txCount: 0,
       factory: await getFactory(ctx),
       stableSwapInfo: await getStableSwapInfo(ctx)

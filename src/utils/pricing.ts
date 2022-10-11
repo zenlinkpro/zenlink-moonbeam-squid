@@ -7,18 +7,18 @@ import { getPair } from "../entities/pair"
 import { getOrCreateToken } from "../entities/token"
 import { Pair, StableSwap } from "../model"
 
-export const WNATIVE = '0xaeaaf0e2c81af264101b9129c00f4440ccf0f720'.toLowerCase()
-export const USDC = '0x6a2d262d56735dba19dd70682b39f6be9a931d98'.toLowerCase()
-export const WNATIVE_USDC = '0x77fe816550d8fdd0fcb0cdea66541f3d76918681'.toLowerCase()
+export const WNATIVE = '0xAcc15dC74880C9944775448304B263D191c6077F'.toLowerCase()
+export const USDC = '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b'.toLowerCase()
+export const WNATIVE_USDC = '0x43182F87401cc95904117eB0188E3D0d8ACCA430'.toLowerCase()
 
 export const WHITELIST: string[] = [
-  '0xaeaaf0e2c81af264101b9129c00f4440ccf0f720'.toLowerCase(), // wnative
-  '0x6a2d262d56735dba19dd70682b39f6be9a931d98'.toLowerCase(), // usdc
-  '0x998082c488e548820f970df5173bd2061ce90635'.toLowerCase(), // zlk
+  '0xAcc15dC74880C9944775448304B263D191c6077F'.toLowerCase(), // wnative
+  '0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b'.toLowerCase(), // usdc
+  '0x3Fd9b6C9A24E09F67b7b706d72864aEbb439100C'.toLowerCase(), // zlk
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = new BigDecimal(3000)
+export const MINIMUM_USD_THRESHOLD_NEW_PAIRS = new BigDecimal(50)
 
 // minimum liquidity for price to get tracked
 export const MINIMUM_LIQUIDITY_THRESHOLD_ETH = new BigDecimal(5)

@@ -40,8 +40,8 @@ export async function getOrCreateStableSwap(
       swapFee: info.swapFee,
       adminFee: info.adminFee,
       virtualPrice: info.virtualPrice,
-      tvlUSD: ZERO_BD.toString(),
-      volumeUSD: ZERO_BD.toString(),
+      tvlUSD: ZERO_BD.toFixed(6),
+      volumeUSD: ZERO_BD.toFixed(6),
       stableSwapInfo
     })
     
