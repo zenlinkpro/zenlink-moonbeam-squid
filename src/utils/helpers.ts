@@ -16,7 +16,7 @@ export function createLiquidityPosition(data: LiquidityPositionData): LiquidityP
 
   return new LiquidityPosition({
     id: `${pair.id}-${user.id}`,
-    liquidityTokenBalance: ZERO_BD.toFixed(6),
+    liquidityTokenBalance: ZERO_BD.toString(),
     pair,
     user,
   })
