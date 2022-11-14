@@ -10,7 +10,6 @@ import { handleBurn, handleMint, handleSwap, handleSync, handleTransfer } from "
 
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
-  .setBatchSize(500)
   .setTypesBundle('moonbeam')
   .setBlockRange({ from: 1711622 })
   .setDataSource({
