@@ -18,30 +18,31 @@ import {
   TokenDayData,
   FactoryDayData,
   ZenlinkDayInfo,
-  ZenlinkInfo
+  ZenlinkInfo,
+  StableSwapHourData
 } from "../model";
 import { findUSDPerToken } from "./pricing";
 
 export async function updateFactoryDayData(ctx: EvmLogHandlerContext<Store>): Promise<FactoryDayData> {
-  const factory = (await ctx.store.get(Factory, FACTORY_ADDRESS))!
+  const factory = (await ctx.store.get(Factory, FACTORY_ADDRESS))
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
-  let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toFixed(6))
+  let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toString())
   if (!factoryDayData) {
     factoryDayData = new FactoryDayData({
-      id: dayID.toFixed(6),
+      id: dayID.toString(),
       date: new Date(dayStartTimestamp),
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
-      dailyVolumeETH: ZERO_BD.toFixed(6),
-      totalVolumeUSD: ZERO_BD.toFixed(6),
-      totalVolumeETH: ZERO_BD.toFixed(6),
-      dailyVolumeUntracked: ZERO_BD.toFixed(6)
+      dailyVolumeUSD: ZERO_BD.toString(),
+      dailyVolumeETH: ZERO_BD.toString(),
+      totalVolumeUSD: ZERO_BD.toString(),
+      totalVolumeETH: ZERO_BD.toString(),
+      dailyVolumeUntracked: ZERO_BD.toString()
     })
   }
-  factoryDayData.totalLiquidityUSD = factory.totalLiquidityUSD
-  factoryDayData.totalLiquidityETH = factory.totalLiquidityETH
-  factoryDayData.txCount = factory.txCount
+  factoryDayData.totalLiquidityUSD = factory?.totalLiquidityUSD || ZERO_BD.toString()
+  factoryDayData.totalLiquidityETH = factory?.totalLiquidityETH || ZERO_BD.toString()
+  factoryDayData.txCount = factory?.txCount || 0
   await ctx.store.save(factoryDayData)
   await updateZenlinkDayInfo(ctx)
   return factoryDayData
@@ -51,7 +52,7 @@ export async function updatePairDayData(ctx: EvmLogHandlerContext<Store>): Promi
   const evmLogArgs = ctx.event.args.log || ctx.event.args;
   const contractAddress = evmLogArgs.address
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
   const dayPairID = `${contractAddress as string}-${dayID}`
   const pair = (await ctx.store.get(Pair, contractAddress))!
@@ -60,13 +61,13 @@ export async function updatePairDayData(ctx: EvmLogHandlerContext<Store>): Promi
     pairDayData = new PairDayData({
       id: dayPairID,
       date: new Date(dayStartTimestamp),
-      pair,
       token0: pair.token0,
       token1: pair.token1,
+      pair,
       pairAddress: contractAddress,
-      dailyVolumeToken0: ZERO_BD.toFixed(6),
-      dailyVolumeToken1: ZERO_BD.toFixed(6),
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
+      dailyVolumeToken0: ZERO_BD.toString(),
+      dailyVolumeToken1: ZERO_BD.toString(),
+      dailyVolumeUSD: ZERO_BD.toString(),
       dailyTxns: 0
     })
   }
@@ -83,7 +84,7 @@ export async function updatePairHourData(ctx: EvmLogHandlerContext<Store>): Prom
   const evmLogArgs = ctx.event.args.log || ctx.event.args;
   const contractAddress = evmLogArgs.address
   const { timestamp } = ctx.block
-  const hourIndex = parseInt((timestamp / 3600000).toFixed(6), 10)
+  const hourIndex = parseInt((timestamp / 3600000).toString(), 10)
   const hourStartUnix = Number(hourIndex) * 3600000
   const dayPairID = `${contractAddress as string}-${hourIndex}`
   const pair = (await ctx.store.get(Pair, contractAddress))!
@@ -93,9 +94,9 @@ export async function updatePairHourData(ctx: EvmLogHandlerContext<Store>): Prom
       id: dayPairID,
       hourStartUnix: BigInt(hourStartUnix),
       pair,
-      hourlyVolumeToken0: ZERO_BD.toFixed(6),
-      hourlyVolumeToken1: ZERO_BD.toFixed(6),
-      hourlyVolumeUSD: ZERO_BD.toFixed(6),
+      hourlyVolumeToken0: ZERO_BD.toString(),
+      hourlyVolumeToken1: ZERO_BD.toString(),
+      hourlyVolumeUSD: ZERO_BD.toString(),
       hourlyTxns: 0
     })
   }
@@ -114,7 +115,7 @@ export async function updateTokenDayData(
 ): Promise<TokenDayData> {
   const bundle = (await ctx.store.get(Bundle, '1'))!
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
   const tokenDayID = `${token.id}-${dayID}`
   let tokenDayData = await ctx.store.get(TokenDayData, tokenDayID)
@@ -123,17 +124,17 @@ export async function updateTokenDayData(
       id: tokenDayID,
       date: new Date(dayStartTimestamp),
       token,
-      priceUSD: BigDecimal(token.derivedETH).times(bundle.ethPrice).toFixed(6),
-      dailyVolumeToken: ZERO_BD.toFixed(6),
-      dailyVolumeETH: ZERO_BD.toFixed(6),
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
+      priceUSD: BigDecimal(token.derivedETH).times(bundle.ethPrice).toString(),
+      dailyVolumeToken: ZERO_BD.toString(),
+      dailyVolumeETH: ZERO_BD.toString(),
+      dailyVolumeUSD: ZERO_BD.toString(),
       dailyTxns: 0,
-      totalLiquidityUSD: ZERO_BD.toFixed(6)
+      totalLiquidityUSD: ZERO_BD.toString()
     })
   }
   tokenDayData.priceUSD = BigDecimal(token.derivedETH).times(bundle.ethPrice).toFixed(6)
   tokenDayData.totalLiquidityToken = token.totalLiquidity
-  tokenDayData.totalLiquidityETH = BigDecimal(token.totalLiquidity).times(token.derivedETH).toFixed(6)
+  tokenDayData.totalLiquidityETH = BigDecimal(token.totalLiquidity).times(token.derivedETH).toString()
   tokenDayData.totalLiquidityUSD = BigDecimal(tokenDayData.totalLiquidityETH).times(bundle.ethPrice).toFixed(6)
   tokenDayData.dailyTxns += 1
   await ctx.store.save(tokenDayData)
@@ -167,7 +168,7 @@ export async function updateStableSwapDayData(
   stableSwap: StableSwap
 ): Promise<StableSwapDayData> {
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
   const stableSwapDayID = `${stableSwap.id}-${dayID}`
   let stableSwapDayData = await ctx.store.get(StableSwapDayData, stableSwapDayID)
@@ -176,8 +177,8 @@ export async function updateStableSwapDayData(
       id: stableSwapDayID,
       date: new Date(dayStartTimestamp),
       stableSwap,
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
-      tvlUSD: ZERO_BD.toFixed(6),
+      dailyVolumeUSD: ZERO_BD.toString(),
+      tvlUSD: ZERO_BD.toString(),
     })
   }
   stableSwapDayData.tvlUSD = stableSwap.tvlUSD
@@ -185,18 +186,42 @@ export async function updateStableSwapDayData(
   return stableSwapDayData
 }
 
+export async function updateStableSwapHourData(
+  ctx: EvmLogHandlerContext<Store>,
+  stableSwap: StableSwap
+): Promise<StableSwapHourData> {
+  const contractAddress = stableSwap.lpToken
+  const { timestamp } = ctx.block
+  const hourIndex = parseInt((timestamp / 3600000).toString(), 10)
+  const hourStartUnix = Number(hourIndex) * 3600000
+  const hourID = `${contractAddress}-${hourIndex}`
+  let stableSwapHourData = await ctx.store.get(StableSwapHourData, hourID)
+  if (!stableSwapHourData) {
+    stableSwapHourData = new StableSwapHourData({
+      id: hourID,
+      hourStartUnix: BigInt(hourStartUnix),
+      stableSwap,
+      hourlyVolumeUSD: ZERO_BD.toString(),
+      tvlUSD: ZERO_BD.toString(),
+    })
+  }
+  stableSwapHourData.tvlUSD = stableSwap.tvlUSD
+  await ctx.store.save(stableSwapHourData)
+  return stableSwapHourData
+}
+
 export async function updateStableDayData(ctx: EvmLogHandlerContext<Store>): Promise<StableDayData> {
   const stableSwapInfo = await getStableSwapInfo(ctx)
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
-  let stableDayData = await ctx.store.get(StableDayData, dayID.toFixed(6))
+  let stableDayData = await ctx.store.get(StableDayData, dayID.toString())
   if (!stableDayData) {
     stableDayData = new StableDayData({
-      id: dayID.toFixed(6),
+      id: dayID.toString(),
       date: new Date(dayStartTimestamp),
-      tvlUSD: ZERO_BD.toFixed(6),
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
+      tvlUSD: ZERO_BD.toString(),
+      dailyVolumeUSD: ZERO_BD.toString(),
     })
   }
   stableDayData.tvlUSD = stableSwapInfo.totalTvlUSD
@@ -207,23 +232,23 @@ export async function updateStableDayData(ctx: EvmLogHandlerContext<Store>): Pro
 
 export async function updateZenlinkDayInfo(ctx: EvmLogHandlerContext<Store>): Promise<ZenlinkDayInfo> {
   const { timestamp } = ctx.block
-  const dayID = parseInt((timestamp / 86400000).toFixed(6), 10)
+  const dayID = parseInt((timestamp / 86400000).toString(), 10)
   const dayStartTimestamp = Number(dayID) * 86400000
-  let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toFixed(6))
+  let factoryDayData = await ctx.store.get(FactoryDayData, dayID.toString())
   if (!factoryDayData) {
     factoryDayData = await updateFactoryDayData(ctx)
   }
-  let stableDayData = await ctx.store.get(StableDayData, dayID.toFixed(6))
+  let stableDayData = await ctx.store.get(StableDayData, dayID.toString())
   if (!stableDayData) {
     stableDayData = await updateStableDayData(ctx)
   }
-  let zenlinkDayInfo = await ctx.store.get(ZenlinkDayInfo, dayID.toFixed(6))
+  let zenlinkDayInfo = await ctx.store.get(ZenlinkDayInfo, dayID.toString())
   if (!zenlinkDayInfo) {
     zenlinkDayInfo = new ZenlinkDayInfo({
-      id: dayID.toFixed(6),
+      id: dayID.toString(),
       date: new Date(dayStartTimestamp),
-      tvlUSD: ZERO_BD.toFixed(6),
-      dailyVolumeUSD: ZERO_BD.toFixed(6),
+      tvlUSD: ZERO_BD.toString(),
+      dailyVolumeUSD: ZERO_BD.toString(),
     })
   }
   zenlinkDayInfo.tvlUSD = BigDecimal(factoryDayData.totalLiquidityUSD)
@@ -257,13 +282,13 @@ export async function updateStableSwapInfo(ctx: EvmLogHandlerContext<Store>): Pr
 export async function updateZenlinkInfo(ctx: EvmLogHandlerContext<Store>): Promise<ZenlinkInfo> {
   const zenlinkInfo = await getZenlinkInfo(ctx)
   const { factory, stableSwapInfo } = zenlinkInfo
-  zenlinkInfo.totalTvlUSD = BigDecimal(factory.totalLiquidityUSD)
+  zenlinkInfo.totalTvlUSD = BigDecimal(factory?.totalLiquidityUSD || '0')
     .add(stableSwapInfo.totalTvlUSD)
     .toFixed(6)
-  zenlinkInfo.totalVolumeUSD = BigDecimal(factory.totalVolumeUSD)
+  zenlinkInfo.totalVolumeUSD = BigDecimal(factory?.totalVolumeUSD || '0')
     .add(stableSwapInfo.totalVolumeUSD)
     .toFixed(6)
-  zenlinkInfo.txCount = factory.txCount + stableSwapInfo.txCount
+  zenlinkInfo.txCount = (factory?.txCount || 0) + stableSwapInfo.txCount
   zenlinkInfo.updatedDate = new Date(ctx.block.timestamp)
   await ctx.store.save(zenlinkInfo)
   return zenlinkInfo
