@@ -1,7 +1,7 @@
 import { lookupArchive } from "@subsquid/archive-registry";
 import { EvmLogHandlerContext, SubstrateBatchProcessor } from "@subsquid/substrate-processor";
 import { Store, TypeormDatabase } from "@subsquid/typeorm-store";
-import { CHAIN_NODE, FACTORY_ADDRESS, FOUR_POOL, FOUR_POOL_LP } from "./consts";
+import { FACTORY_ADDRESS, FOUR_POOL, FOUR_POOL_LP } from "./consts";
 import * as factory from './abis/factory'
 import * as pair from './abis/pair'
 import * as erc20 from './abis/ERC20'
@@ -26,7 +26,6 @@ const processor = new SubstrateBatchProcessor()
   .setTypesBundle('moonbeam')
   .setBlockRange({ from: 1112102 })
   .setDataSource({
-    chain: CHAIN_NODE,
     archive: lookupArchive('moonbeam', { release: "FireSquid" })
   })
   .addEvmLog(FACTORY_ADDRESS, {
