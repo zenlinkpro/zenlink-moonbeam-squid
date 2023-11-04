@@ -340,6 +340,13 @@ export async function updateFarmingPoolInfo(
   }
 }
 
+export async function handleUpdateAllFarmingPools(ctx: Context, log: Log) {
+  const farmings = await ctx.store.find(Farm, { take: 100 })
+  await Promise.all(
+    farmings.map(({ pid }) => updateFarmingPoolInfo(ctx, log, log.address, Number(pid)))
+  )
+}
+
 export async function handleFarmingPoolAdd(ctx: Context, log: Log) {
   const farmingContract = new farming.Contract({ ...ctx, block: log.block }, log.address)
   const poolLength = await farmingContract.poolLength()
@@ -370,4 +377,5 @@ export async function handleFarmingClaim(ctx: Context, log: Log) {
   const { user } = event;
   await updateFarmingPoolInfo(ctx, log, log.address, pid);
   await updateStakePosition(ctx, log, log.address, pid, user)
+  await handleUpdateAllFarmingPools(ctx, log)
 }
